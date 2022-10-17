@@ -1,37 +1,39 @@
 package ru.katkova.gamerpowerannouncer.handler;
 
-import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.katkova.gamerpowerannouncer.bot.Bot;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.katkova.gamerpowerannouncer.data.User;
 import ru.katkova.gamerpowerannouncer.dictionary.Command;
+import ru.katkova.gamerpowerannouncer.dictionary.UserAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Primary
 @Service
-public class StartHandler implements CommandHandler{
+public class StartHandler implements UserActionHandler {
 
-//    @Autowired
-//    public Bot bot;
-
+    public static final String WELCOME_TEXT = "Hello! \n" +
+            "This bot will send you actual giveaways (like free games, DLC etc) from different stores and for different platforms.\n" +
+            "By default all giveaways types for any platform will be sent. \n" +
+            "If you want to change platform and source store (PC/XBOX/EpicGames...) please use command /platform \n" +
+            "If you want to change type of announcement (Game/Loot/Beta Access) please use command /type \n" +
+            "If you want to see current actual giveaways please use command /show";
     @Override
-    public Command getCommand() {
+    public UserAction getAction() {
         return Command.START;
     }
 
-    @SneakyThrows
     @Override
-    public SendMessage handle(User user) {
+    public List<SendMessage> handle(User user, Update update) {
         SendMessage message = SendMessage.builder()
                 .chatId(user.getChatId())
-                .text("Hello start \n" +
-                        "this bot will be send you actual free PC games from all stores \n" +
-                        "if you want to change Platform (PC/XBOX/both) please use command /changePlatform \n" +
-                        "if you want to change Type of announcement (Game/Loot/smth) please use command /type")
+                .text(WELCOME_TEXT)
                 .build();
-        return message;}
+        List<SendMessage> sendMessageList = new ArrayList<>();
+        sendMessageList.add(message);
+        return sendMessageList;
+    }
 }
