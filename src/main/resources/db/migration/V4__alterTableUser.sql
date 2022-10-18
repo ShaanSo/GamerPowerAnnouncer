@@ -1,0 +1,2 @@
+ALTER TABLE TELEGRAM_USERS
+DROP COLUMN active_poll_message_id;

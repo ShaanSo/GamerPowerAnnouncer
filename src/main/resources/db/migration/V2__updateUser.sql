@@ -1,0 +1,2 @@
+ALTER TABLE TELEGRAM_USERS
+    ADD active_poll_message_id VARCHAR(255);

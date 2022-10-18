@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.katkova.gamerpowerannouncer.data.User;
+import ru.katkova.gamerpowerannouncer.data.UserPoll;
 import ru.katkova.gamerpowerannouncer.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -18,6 +19,12 @@ public class UserService {
     public void createNewUser(Long chatId ) {
         log.info("User with chat id " + chatId + " was created in DB");
         User user = new User(chatId);
+        user.setDefaultProperties();
+        userRepository.save(user);
+    }
+
+    public void saveUser(User user) {
+        log.info("user with chat id " + user.getChatId() + " was saved in DB");
         userRepository.save(user);
     }
 

@@ -7,16 +7,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
+import org.telegram.telegrambots.meta.api.methods.polls.StopPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import org.telegram.telegrambots.meta.api.objects.ChatMemberUpdated;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.polls.Poll;
+import org.telegram.telegrambots.meta.api.objects.polls.PollAnswer;
+import org.telegram.telegrambots.meta.api.objects.polls.PollOption;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.katkova.gamerpowerannouncer.data.User;
+import ru.katkova.gamerpowerannouncer.data.UserPoll;
 import ru.katkova.gamerpowerannouncer.dictionary.Command;
 import ru.katkova.gamerpowerannouncer.handler.HandlerManagement;
+import ru.katkova.gamerpowerannouncer.service.UserPollService;
 import ru.katkova.gamerpowerannouncer.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -30,6 +40,9 @@ public class Bot extends TelegramLongPollingBot {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserPollService userPollService;
 
     @Autowired
     HandlerManagement handlerManagement;
@@ -52,7 +65,23 @@ public class Bot extends TelegramLongPollingBot {
 
 @SneakyThrows
     public void onUpdateReceived(Update update) {
-        Long chatId = update.getMessage().getChatId();
+        Long chatId;
+        if (update.hasPollAnswer()) {
+            //для приватного чата chatId = user.Id, подумать над неприватным чатом
+            chatId = update.getPollAnswer().getUser().getId();
+
+        } else if (update.hasMessage()) {
+            chatId = update.getMessage().getChatId();
+        } else if (update.hasPoll()) {
+            chatId = userPollService.getChatIdByPollId(update.getPoll().getId());
+        } else {
+            return;
+        }
+
+    //ответ приходит в
+//    update.getPollAnswer().getUser().getId();
+//    update.getPollAnswer().getOptionIds().get(0).intValue() - массив интов с номерами выбранных опций
+
 
         if (!userService.existsInDB(chatId)) {
             userService.createNewUser(chatId);
@@ -63,20 +92,36 @@ public class Bot extends TelegramLongPollingBot {
             execute(greetings);
         }
 
-        if (update.hasMessage()) {
-            if (update.getMessage().isCommand()) {
-                SendMessage sendMessage = handlerManagement.manage(userService.getUser(chatId), update.getMessage().getText());
-                execute(sendMessage);
+            List<? extends BotApiMethod> sendMethodList = handlerManagement.manage(userService.getUser(chatId), update);
+            for (BotApiMethod method: sendMethodList) {
+                //если пытаемся создать опросник, то сохранем id актуального опросника в пользователя
+                if (method.getMethod().equals("sendPoll")) {
+                    SendPoll messageMethod = (SendPoll) method;
+                    Message message = execute(messageMethod);
+                    UserPoll userPoll = new UserPoll.Builder()
+                            .chatId(chatId)
+                            .pollId(message.getPoll().getId())
+                            .messageId(message.getMessageId())
+                            .pollQuestion(message.getPoll().getQuestion())
+                            .build();
+                    userPollService.saveUserPoll(userPoll);
+                } else {
+                    try {
+                        execute(method);
+                    } catch (Exception e) {
+                        //если перехватили исключение о том, что полл уже закрыт - ну и фиг с ним
+                    }
+
+                }
             }
-        }
-//
-//        if (!userService.existsInDB(chatId)) {
-//            userService.createNewUser(user);
-//
-//            List<Promotion> promotionList = promotionService.getActualPromotions();
-//            for (Promotion p: promotionList) {
-//                formAndSendPromotion(p, user);
-//            }
+
+//        else if (update.hasPollAnswer()) {
+//            BotApiMethod sendPoll = handlerManagement.manage(userService.getUser(chatId), update);
+//            execute(sendPoll);
+//            StopPoll stopPoll = StopPoll.builder().chatId(chatId).messageId(userService.getUser(chatId).getActivePollMessageId()).build();
+//            execute(stopPoll);
+//        } else if (update.hasPoll()) {
+//            //сохраняем результаты опросника в пользователя
 //        }
     }
 

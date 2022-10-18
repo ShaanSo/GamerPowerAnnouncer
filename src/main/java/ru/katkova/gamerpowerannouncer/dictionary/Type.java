@@ -9,11 +9,11 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum Type {
-    GAME("game"),
-    LOOT("loot"),
-    BETA("beta");
+    GAME("Free Games"),
+    DLC("Free Loot"),
+    BETA("Beta Access");
 
-    String value;
+    private final String value;
 
     public static Type findByValue(String value) {
         Type result = null;

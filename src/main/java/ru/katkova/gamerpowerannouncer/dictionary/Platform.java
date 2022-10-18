@@ -12,21 +12,20 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 public enum Platform {
-    PC("pc"),
-    STEAM("stream"),
-    EPIC_GAME_STORE("epic-games-store"),
-    UPLAY("uplay"),
-    GOG("gog"),
-    ICTHIO("icthio"),
-    PS4("ps4"),
-    X_BOX_ONE("xbox-one"),
-    SWITCH("switch"),
-    ANDROID("android"),
-    IOS("ios"),
-    VR("vr"),
-    BATTLENET("battlenet");
+    PC("PC"),
+    PS4("Playstation 4"),
+    PS5("Playstation 5"),
+    X_BOX_ONE("XBox One"),
+    X_BOX_SERIES("XBox Series"),
+    XBOX360("Xbox 360"),
+    SWITCH("Nintendo Switch"),
+    IOS("iOS"),
+    ANDROID("Android"),
+    VR("VR");
 
-    String value;
+
+
+    private final String value;
 
 //    public static Set<Platform> getPlatformListByValues(String platformString)
 //    {
