@@ -7,16 +7,17 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PollQuestions implements UserAction {
     TYPE("Please, select giveaway type:", "TYPE_HANDLER"),
+    LAUNCHER("Please, select giveaway launcher:", "LAUNCHER_HANDLER"),
     PLATFORM("Please, select giveaway platform:", "PLATFORM_HANDLER");
 
-    public final String Value;
-    public final String handler;
+    private final String value;
+    private final String handler;
 
-    public static PollQuestions getByHandler(String handler) {
-        for (PollQuestions question: PollQuestions.values()) {
-            if (question.getHandler().equals(handler))
-                return question;
-        }
-        return null;
-    }
+//    public static PollQuestions getByHandler(String handler) {
+//        for (PollQuestions question: PollQuestions.values()) {
+//            if (question.getHandler().equals(handler))
+//                return question;
+//        }
+//        return null;
+//    }
 }

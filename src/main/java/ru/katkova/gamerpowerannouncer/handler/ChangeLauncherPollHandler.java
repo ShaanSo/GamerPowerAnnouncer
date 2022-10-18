@@ -6,49 +6,46 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.polls.PollOption;
 import ru.katkova.gamerpowerannouncer.data.User;
-import ru.katkova.gamerpowerannouncer.dictionary.Platform;
-import ru.katkova.gamerpowerannouncer.dictionary.PollQuestions;
-import ru.katkova.gamerpowerannouncer.dictionary.UserAction;
+import ru.katkova.gamerpowerannouncer.dictionary.*;
 import ru.katkova.gamerpowerannouncer.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class ChangePlatformPollHandler implements UserActionHandler{
+public class ChangeLauncherPollHandler implements UserActionHandler {
 
     @Autowired
     private UserService userService;
 
     @Override
+    public UserAction getAction() {
+        return PollQuestions.LAUNCHER;
+    }
+
+    @Override
     public List<SendMessage> handle(User user, Update update) {
-        String userPreferredPlatformsString = user.getPreferredPlatformList();
+        String userPreferredLauncherString = user.getPreferredLauncherList();
         Iterator<PollOption> iter = update.getPoll().getOptions().iterator();
-        List<String> preferredPlatformList = new ArrayList<>();
-        for (Platform platform: Platform.values()) {
+        List<String> preferredLauncherList = new ArrayList<>();
+        for (Launcher launcher: Launcher.values()) {
             if (iter.next().getVoterCount() > 0) {
-                preferredPlatformList.add(platform.getValue());
+                preferredLauncherList.add(launcher.getValue());
             }
         }
-        if (!preferredPlatformList.isEmpty()) {
-            userPreferredPlatformsString = String.join((","), preferredPlatformList);
-            user.setPreferredPlatformList(userPreferredPlatformsString);
+        if (!preferredLauncherList.isEmpty()) {
+            userPreferredLauncherString = String.join((","), preferredLauncherList);
+            user.setPreferredLauncherList(userPreferredLauncherString);
             userService.saveUser(user);
         }
 
         SendMessage message = SendMessage.builder()
                 .chatId(user.getChatId())
-                .text("Selected Platforms: " + userPreferredPlatformsString)
+                .text("Selected Launchers: " + userPreferredLauncherString)
                 .build();
         List<SendMessage> sendMessageList = new ArrayList<>();
         sendMessageList.add(message);
         return sendMessageList;
-    }
-
-    @Override
-    public UserAction getAction() {
-        return PollQuestions.PLATFORM;
     }
 }

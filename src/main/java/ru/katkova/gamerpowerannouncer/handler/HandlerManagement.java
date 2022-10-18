@@ -2,19 +2,12 @@ package ru.katkova.gamerpowerannouncer.handler;
 
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.polls.PollAnswer;
 import ru.katkova.gamerpowerannouncer.data.User;
-import ru.katkova.gamerpowerannouncer.dictionary.CallbackQuery;
-import ru.katkova.gamerpowerannouncer.dictionary.Command;
-import ru.katkova.gamerpowerannouncer.dictionary.PollOptions;
-import ru.katkova.gamerpowerannouncer.dictionary.UserAction;
+import ru.katkova.gamerpowerannouncer.dictionary.*;
 import ru.katkova.gamerpowerannouncer.service.UserService;
 
-import javax.crypto.spec.ChaCha20ParameterSpec;
 import java.util.*;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
@@ -45,7 +38,7 @@ public class HandlerManagement {
 //    }
 
     public List<? extends BotApiMethod> manage(User user, Update update) {
-        if (!update.hasPollAnswer() || (update.hasPoll() && update.getPoll().getTotalVoterCount() != 0))
+        if  (!(update.hasPoll() && update.getPoll().getTotalVoterCount() == 0))
         return handlers.getOrDefault(getUserAction(update), defaultHandler).handle(user, update);
         else return new ArrayList<>();
     }
@@ -76,17 +69,19 @@ public class HandlerManagement {
 
     @SneakyThrows
     public static UserAction getUserAction(Update update) {
-        UserAction userAction = Command.START;
+        UserAction userAction;
         if (update.hasMessage() && update.getMessage().isCommand()) {
             userAction = EnumSet.allOf(Command.class)
                     .stream()
                     .filter(command -> command.getValue().equalsIgnoreCase(update.getMessage().getText()))
                     .findFirst().orElse(Command.START);
         } else if (update.hasPoll()) {
-            userAction = EnumSet.allOf(PollOptions.class)
+            userAction = EnumSet.allOf(PollQuestions.class)
                     .stream()
-                    .filter(command -> command.getValue().equalsIgnoreCase(update.getPoll().getQuestion()))
+                    .filter(question -> question.getValue().equalsIgnoreCase(update.getPoll().getQuestion()))
                     .findFirst().orElse(null);
+        } else if (update.hasPollAnswer()) {
+            userAction = PollAnswer.POLL_ANSWER;
         } else return Command.START;
         return userAction;
     }

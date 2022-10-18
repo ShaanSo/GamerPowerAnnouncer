@@ -11,39 +11,38 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.katkova.gamerpowerannouncer.data.User;
 import ru.katkova.gamerpowerannouncer.dictionary.Platform;
 import ru.katkova.gamerpowerannouncer.dictionary.PollQuestions;
+import ru.katkova.gamerpowerannouncer.dictionary.Type;
 import ru.katkova.gamerpowerannouncer.dictionary.UserAction;
 import ru.katkova.gamerpowerannouncer.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ChangeTypePollHandler implements UserActionHandler {
-
     @Autowired
     UserService userService;
-
     @Override
     public List<SendMessage> handle(User user, Update update) {
-
-        String finalList = user.getPreferredPlatformList();
-        update.getPoll().getOptions();
-        int i = 0;
-        List<String> preferredPlatformList = new ArrayList<>();
-        for (Platform platform: Platform.values()) {
-            if (update.getPoll().getOptions().get(i).getVoterCount() > 0) {
-                preferredPlatformList.add(platform.getValue());
+        String userPreferredTypesString = user.getPreferredPlatformList();
+        Iterator<PollOption> iter = update.getPoll().getOptions().iterator();
+        List<String> preferredTypeList = new ArrayList<>();
+        for (Type type: Type.values()) {
+            if (iter.next().getVoterCount() > 0) {
+                preferredTypeList.add(type.getValue());
             }
-            finalList = preferredPlatformList.stream().collect(Collectors.joining(("," )));
-            user.setPreferredPlatformList(finalList);
-            i++;
         }
-        userService.saveUser(user);
+        if (!preferredTypeList.isEmpty()) {
+            userPreferredTypesString = String.join((","), preferredTypeList);
+            user.setPreferredTypeList(userPreferredTypesString);
+            userService.saveUser(user);
+        }
 
         SendMessage message = SendMessage.builder()
                 .chatId(user.getChatId())
-                .text("Selected Types:")
+                .text("Selected Types: " + userPreferredTypesString)
                 .build();
         List<SendMessage> sendMessageList = new ArrayList<>();
         sendMessageList.add(message);

@@ -19,6 +19,7 @@ public class UserService {
     public void createNewUser(Long chatId ) {
         log.info("User with chat id " + chatId + " was created in DB");
         User user = new User(chatId);
+        user.setDefaultProperties();
         userRepository.save(user);
     }
 

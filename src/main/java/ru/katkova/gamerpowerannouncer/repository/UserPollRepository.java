@@ -9,4 +9,5 @@ import ru.katkova.gamerpowerannouncer.data.UserPoll;
 public interface UserPollRepository extends JpaRepository<UserPoll, String> {
 
     UserPoll findFirstByChatId(Long chatId);
+    UserPoll findFirstByPollId(String pollId);
 }

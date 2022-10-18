@@ -22,4 +22,9 @@ public class UserPollService {
     public UserPoll getUserPollByChatId(Long chatId) {
         return userPollRepository.findFirstByChatId(chatId);
     }
+
+    public Long getChatIdByPollId(String pollId) {
+        return userPollRepository.findFirstByPollId(pollId).getChatId();
+    }
+
 }
