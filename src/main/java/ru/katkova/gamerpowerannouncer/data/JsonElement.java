@@ -26,6 +26,4 @@ public class JsonElement {
     private String open_giveaway;
     private String type;
     private String platforms;
-
-
 }

@@ -30,7 +30,7 @@ public class ChangeLauncherPollHandler implements UserActionHandler {
         Iterator<PollOption> iter = update.getPoll().getOptions().iterator();
         List<String> preferredLauncherList = new ArrayList<>();
         for (Launcher launcher: Launcher.values()) {
-            if (iter.next().getVoterCount() > 0) {
+            if (iter.hasNext() && iter.next().getVoterCount() > 0) {
                 preferredLauncherList.add(launcher.getValue());
             }
         }

@@ -16,13 +16,10 @@ public class UserPoll {
     @Id
     @Column(name = "chatid")
     Long chatId;
-
     @Column(name = "pollid")
     String pollId;
-
     @Column(name = "messageid")
     Integer messageId;
-
     @Column(name = "poll_question")
     String pollQuestion;
 

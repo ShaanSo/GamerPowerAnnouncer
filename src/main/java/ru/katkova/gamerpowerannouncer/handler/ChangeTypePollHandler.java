@@ -26,12 +26,12 @@ public class ChangeTypePollHandler implements UserActionHandler {
     UserService userService;
     @Override
     public List<SendMessage> handle(User user, Update update) {
-        String userPreferredTypesString = user.getPreferredPlatformList();
+        String userPreferredTypesString = user.getPreferredTypeList();
         Iterator<PollOption> iter = update.getPoll().getOptions().iterator();
         List<String> preferredTypeList = new ArrayList<>();
         for (Type type: Type.values()) {
-            if (iter.next().getVoterCount() > 0) {
-                preferredTypeList.add(type.getValue());
+            if (iter.hasNext() && iter.next().getVoterCount() > 0) {
+                preferredTypeList.add(type.getApiValue());
             }
         }
         if (!preferredTypeList.isEmpty()) {
