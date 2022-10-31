@@ -9,24 +9,21 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.polls.StopPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.*;
-import org.telegram.telegrambots.meta.api.objects.polls.Poll;
-import org.telegram.telegrambots.meta.api.objects.polls.PollAnswer;
-import org.telegram.telegrambots.meta.api.objects.polls.PollOption;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.katkova.gamerpowerannouncer.data.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import ru.katkova.gamerpowerannouncer.data.UserPoll;
-import ru.katkova.gamerpowerannouncer.dictionary.Command;
 import ru.katkova.gamerpowerannouncer.handler.HandlerManagement;
+import ru.katkova.gamerpowerannouncer.job.Job;
 import ru.katkova.gamerpowerannouncer.service.UserPollService;
 import ru.katkova.gamerpowerannouncer.service.UserService;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -37,15 +34,14 @@ public class Bot extends TelegramLongPollingBot {
     @Getter
     @Value("${bot.token}")
     private final String BotToken;
-
     @Autowired
-    UserService userService;
-
+    private UserService userService;
     @Autowired
-    UserPollService userPollService;
-
+    private UserPollService userPollService;
     @Autowired
-    HandlerManagement handlerManagement;
+    private HandlerManagement handlerManagement;
+    @Autowired
+    private Job job;
 
     private static final String GREETINGS_TEXT = "Привет! Я GamerPower Announcer Bot. \n"+
             "Я буду присылать тебе анонсы бесплатных игр и дополнений с сайта GamerPower. \n" +
@@ -69,19 +65,13 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasPollAnswer()) {
             //для приватного чата chatId = user.Id, подумать над неприватным чатом
             chatId = update.getPollAnswer().getUser().getId();
-
         } else if (update.hasMessage()) {
             chatId = update.getMessage().getChatId();
-        } else if (update.hasPoll()) {
+        } else if (update.hasPoll() && update.getPoll().getTotalVoterCount() > 0) {
             chatId = userPollService.getChatIdByPollId(update.getPoll().getId());
         } else {
             return;
         }
-
-    //ответ приходит в
-//    update.getPollAnswer().getUser().getId();
-//    update.getPollAnswer().getOptionIds().get(0).intValue() - массив интов с номерами выбранных опций
-
 
         if (!userService.existsInDB(chatId)) {
             userService.createNewUser(chatId);
@@ -92,10 +82,10 @@ public class Bot extends TelegramLongPollingBot {
             execute(greetings);
         }
 
-            List<? extends BotApiMethod> sendMethodList = handlerManagement.manage(userService.getUser(chatId), update);
-            for (BotApiMethod method: sendMethodList) {
+            List<? extends PartialBotApiMethod> sendMethodList = handlerManagement.manage(userService.getUser(chatId), update);
+            for (PartialBotApiMethod method: sendMethodList) {
                 //если пытаемся создать опросник, то сохранем id актуального опросника в пользователя
-                if (method.getMethod().equals("sendPoll")) {
+                if (method.getClass().isAssignableFrom(SendPoll.class)) {
                     SendPoll messageMethod = (SendPoll) method;
                     Message message = execute(messageMethod);
                     UserPoll userPoll = new UserPoll.Builder()
@@ -105,15 +95,30 @@ public class Bot extends TelegramLongPollingBot {
                             .pollQuestion(message.getPoll().getQuestion())
                             .build();
                     userPollService.saveUserPoll(userPoll);
-                } else {
+                } else if (method.getClass().isAssignableFrom(SendPhoto.class)) {
+                        SendPhoto messageMethod = (SendPhoto) method;
+                        execute(messageMethod);
+                } else if (method.getClass().isAssignableFrom(SendMessage.class)) {
+                    SendMessage messageMethod = (SendMessage) method;
+                    execute(messageMethod);
+                } else if (method.getClass().isAssignableFrom(StopPoll.class)) {
+                    StopPoll messageMethod = (StopPoll) method;
                     try {
-                        execute(method);
-                    } catch (Exception e) {
-                        //если перехватили исключение о том, что полл уже закрыт - ну и фиг с ним
+                        execute(messageMethod);
+                    } catch (TelegramApiRequestException e) {
+                        //do nothing
                     }
-
                 }
             }
+
+    if (update.hasMessage() && update.getMessage().isCommand()
+            && update.getMessage().getText().equals("/show")
+            && !job.check().isEmpty()) {
+        for (SendPhoto sendPhoto: job.check()) {
+            execute(sendPhoto);
+        }
+    }
+
 
 //        else if (update.hasPollAnswer()) {
 //            BotApiMethod sendPoll = handlerManagement.manage(userService.getUser(chatId), update);

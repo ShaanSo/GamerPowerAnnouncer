@@ -28,7 +28,7 @@ public class ChangePlatformPollHandler implements UserActionHandler{
         Iterator<PollOption> iter = update.getPoll().getOptions().iterator();
         List<String> preferredPlatformList = new ArrayList<>();
         for (Platform platform: Platform.values()) {
-            if (iter.next().getVoterCount() > 0) {
+            if (iter.hasNext() && iter.next().getVoterCount() > 0) {
                 preferredPlatformList.add(platform.getValue());
             }
         }

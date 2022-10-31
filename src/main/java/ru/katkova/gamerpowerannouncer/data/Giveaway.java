@@ -46,11 +46,7 @@ public class Giveaway {
     @Column(name = "open_giveaway")
     private String open_giveaway;
     @Column(name = "type")
-    private Type type;
+    private String type;
     @Column(name = "platforms")
     private String platforms;
-
-//    @Transient
-//    @ElementCollection
-//    private Set<Platform> platformList;
 }

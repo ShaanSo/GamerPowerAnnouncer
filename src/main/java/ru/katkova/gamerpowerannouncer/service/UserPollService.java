@@ -18,7 +18,6 @@ public class UserPollService {
         log.info("userPoll with chat id " + userPoll.getChatId() + " was saved in DB");
         userPollRepository.save(userPoll);
     }
-
     public UserPoll getUserPollByChatId(Long chatId) {
         return userPollRepository.findFirstByChatId(chatId);
     }

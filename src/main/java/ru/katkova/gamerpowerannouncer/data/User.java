@@ -47,7 +47,7 @@ public class User {
         }
 
         for (Type type: Type.values()) {
-            preferredTypesString.add(type.getValue());
+            preferredTypesString.add(type.getApiValue());
         }
 
         for (Launcher launcher: Launcher.values()) {

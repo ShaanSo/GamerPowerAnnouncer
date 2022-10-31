@@ -2,6 +2,8 @@ package ru.katkova.gamerpowerannouncer.service;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.katkova.gamerpowerannouncer.data.Giveaway;
@@ -15,14 +17,17 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Slf4j
+@AllArgsConstructor
 public class GiveawayParserService {
 
     ObjectMapper objectMapper = new ObjectMapper();
 //    List<Giveaway> giveawayList = new ArrayList<>();
 
     public List<Giveaway> getGiveawayListFromElements(String message) {
+        log.info("[GiveawayParserService] Trying parse json");
         try {
-            File file = new File("src/main/resources/test.json");
+            File file = new File("src/main/resources/test_cut.json");
             List<JsonElement> elementsList = Arrays.asList(objectMapper.readValue(file, JsonElement[].class));
 //            giveawayList = JsonElement.getGiveawayListFromElements(elementsList);
             List<Giveaway> giveawayList = new ArrayList<>();
@@ -42,7 +47,7 @@ public class GiveawayParserService {
                         .status(elements.getStatus())
                         .gamerpower_url(elements.getGamerpower_url())
                         .open_giveaway(elements.getOpen_giveaway())
-                        .type(Type.findByValue(elements.getType()))
+                        .type(elements.getType())
                         .platforms(elements.getPlatforms())
 //                    .platformList(Platform.getPlatformListByValues(elements.getPlatforms()))
                         .build();

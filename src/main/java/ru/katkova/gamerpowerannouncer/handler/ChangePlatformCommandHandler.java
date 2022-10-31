@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.polls.StopPoll;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -28,9 +29,9 @@ public class ChangePlatformCommandHandler implements UserActionHandler{
     UserPollService userPollService;
 
     @Override
-    public List<BotApiMethod> handle(User user, Update update) {
+    public List<PartialBotApiMethod> handle(User user, Update update) {
 
-        List<BotApiMethod> methodList = new ArrayList<>();
+        List<PartialBotApiMethod> methodList = new ArrayList<>();
 
         UserPoll userPoll = userPollService.getUserPollByChatId(user.getChatId());
         //если уже есть открытый опросник - закрываем

@@ -3,6 +3,7 @@ package ru.katkova.gamerpowerannouncer.handler;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.katkova.gamerpowerannouncer.data.User;
 import ru.katkova.gamerpowerannouncer.dictionary.*;
@@ -37,7 +38,7 @@ public class HandlerManagement {
 //                //handlers.getOrDefault(getUserAction(message), defaultHandler).handle(user, poll);
 //    }
 
-    public List<? extends BotApiMethod> manage(User user, Update update) {
+    public List<? extends PartialBotApiMethod> manage(User user, Update update) {
         if  (!(update.hasPoll() && update.getPoll().getTotalVoterCount() == 0))
         return handlers.getOrDefault(getUserAction(update), defaultHandler).handle(user, update);
         else return new ArrayList<>();
