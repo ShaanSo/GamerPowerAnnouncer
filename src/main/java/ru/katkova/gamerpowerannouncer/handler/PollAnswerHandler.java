@@ -2,10 +2,8 @@ package ru.katkova.gamerpowerannouncer.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.polls.StopPoll;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.katkova.gamerpowerannouncer.data.User;
 import ru.katkova.gamerpowerannouncer.data.UserPoll;

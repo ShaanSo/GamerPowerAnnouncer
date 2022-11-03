@@ -2,15 +2,10 @@ package ru.katkova.gamerpowerannouncer.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.polls.StopPoll;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.polls.Poll;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.katkova.gamerpowerannouncer.data.User;
 import ru.katkova.gamerpowerannouncer.data.UserPoll;
 import ru.katkova.gamerpowerannouncer.dictionary.Command;
@@ -18,7 +13,6 @@ import ru.katkova.gamerpowerannouncer.dictionary.PollOptions;
 import ru.katkova.gamerpowerannouncer.dictionary.PollQuestions;
 import ru.katkova.gamerpowerannouncer.dictionary.UserAction;
 import ru.katkova.gamerpowerannouncer.service.UserPollService;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,11 +1,6 @@
 package ru.katkova.gamerpowerannouncer.data;
 
 import lombok.*;
-import org.springframework.data.annotation.Transient;
-import ru.katkova.gamerpowerannouncer.dictionary.Command;
-import ru.katkova.gamerpowerannouncer.dictionary.Platform;
-import ru.katkova.gamerpowerannouncer.dictionary.Type;
-
 import javax.persistence.*;
 
 @NoArgsConstructor

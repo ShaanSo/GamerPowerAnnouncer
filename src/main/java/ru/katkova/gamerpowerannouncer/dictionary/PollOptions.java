@@ -11,7 +11,6 @@ public enum PollOptions implements UserAction {
     DLC("Free Loot", "TYPE_HANDLER"),
     BETA("Beta Access", "TYPE_HANDLER"),
 
-//    ALL("All Platforms", "PLATFORM_HANDLER"),
     PC("PC", "PLATFORM_HANDLER"),
     PS4("Playstation 4", "PLATFORM_HANDLER"),
     PS5("Playstation 5", "PLATFORM_HANDLER"),
@@ -22,7 +21,6 @@ public enum PollOptions implements UserAction {
     IOS("iOS", "PLATFORM_HANDLER"),
     ANDROID("Android", "PLATFORM_HANDLER"),
     VR("VR", "PLATFORM_HANDLER"),
-
 
     STEAM("Steam", "LAUNCHER_HANDLER"),
     EGS("Epic Games Store", "LAUNCHER_HANDLER"),
@@ -35,5 +33,4 @@ public enum PollOptions implements UserAction {
 
     private final String Value;
     private final String handler;
-//    private final Integer optionId;
 }

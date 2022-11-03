@@ -2,10 +2,6 @@ package ru.katkova.gamerpowerannouncer.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
-import ru.katkova.gamerpowerannouncer.dictionary.Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)

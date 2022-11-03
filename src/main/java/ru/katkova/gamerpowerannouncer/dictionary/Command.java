@@ -16,8 +16,4 @@ public enum Command implements UserAction {
 
     private final String Value;
     private final String handler;
-
-//    public String getHandler() {
-//        return this.handler;
-//    }
 }
