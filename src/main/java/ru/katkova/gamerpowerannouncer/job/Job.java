@@ -3,12 +3,12 @@ package ru.katkova.gamerpowerannouncer.job;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import ru.katkova.gamerpowerannouncer.data.Giveaway;
 import ru.katkova.gamerpowerannouncer.data.User;
+import ru.katkova.gamerpowerannouncer.service.GPRequestService;
 import ru.katkova.gamerpowerannouncer.service.GiveawayParserService;
 import ru.katkova.gamerpowerannouncer.service.GiveawayService;
 import ru.katkova.gamerpowerannouncer.service.UserService;
@@ -28,23 +28,17 @@ public class Job {
 
     @Autowired
     private GiveawayService giveawayService;
+    @Autowired
+    private GPRequestService gpRequestService;
 
     @SneakyThrows
     public List<SendPhoto> check() {
-
         //делаем запрос в API и разбираем ответ
-        log.debug("[ScheduledJob] Check for updates started");
-//        String response = gpRequestService.handleRequest();
-//        String response = "";
-//        List<Giveaway> giveawayList = giveawayParserService.getGiveawayListFromElements(response);
 
-        //получаем пользователей из БД, которым нужно разослать уведомление
-//       List<User> userList =  userService.restoreUsersFromDB();
-
+        log.debug("[Job] Check for updates started");
+        String response = gpRequestService.handleRequest();
         //проходим по списку присланных предложений
-
-
-        List<Giveaway> giveawayList = giveawayParserService.getGiveawayListFromElements("response");
+        List<Giveaway> giveawayList = giveawayParserService.getGiveawayListFromElements(response);
         List<User> userList = userService.restoreUsersFromDB();
         List<SendPhoto> sendPhotoList = new ArrayList<>();
 
@@ -61,7 +55,6 @@ public class Job {
                                 .chatId(user.getChatId())
                                 .build();
                         sendPhotoList.add(sendPhoto);
-//                        bot.execute(sendPhoto);
                     }
                 }
             }

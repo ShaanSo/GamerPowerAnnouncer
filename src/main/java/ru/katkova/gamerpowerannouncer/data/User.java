@@ -5,7 +5,6 @@ import lombok.Setter;
 import ru.katkova.gamerpowerannouncer.dictionary.Launcher;
 import ru.katkova.gamerpowerannouncer.dictionary.Platform;
 import ru.katkova.gamerpowerannouncer.dictionary.Type;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

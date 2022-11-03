@@ -12,12 +12,4 @@ public enum PollQuestions implements UserAction {
 
     private final String value;
     private final String handler;
-
-//    public static PollQuestions getByHandler(String handler) {
-//        for (PollQuestions question: PollQuestions.values()) {
-//            if (question.getHandler().equals(handler))
-//                return question;
-//        }
-//        return null;
-//    }
 }

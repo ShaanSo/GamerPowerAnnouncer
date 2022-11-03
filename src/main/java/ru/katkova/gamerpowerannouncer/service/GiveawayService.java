@@ -1,8 +1,6 @@
 package ru.katkova.gamerpowerannouncer.service;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.internal.guava.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.katkova.gamerpowerannouncer.data.Giveaway;
@@ -19,31 +17,6 @@ public class GiveawayService {
 
     @Autowired
     private GiveawayRepository giveawayRepository;
-
-//    public void update(List<Giveaway> giveawayList) {
-//        for (Giveaway giveaway: giveawayList) {
-//            if (giveaway.existsInBD()) {
-//                giveaway.changeStatus(ActualSend)
-//
-//            } else {
-//
-//            }
-//        }
-        //идем по присланному списку
-        //ищем в БД - если находим, проставляем статус ActualSend
-        //идем по списку пользователей и отправляем записи из нового списка, но не ActualSend (перезаписываем статус как ActualSend)
-        //тут для найденных можно проверить данные типо даты - и если данные обновились проставить статус ActualSend
-        //если не находим - добавляем как новый со статусом ActualNew
-        //для всех остальных запсей в БД (не Actual и не New) указываем статус EXPIRED
-//    }
-
-    //для нового пользователя
-    //идем по БД и отправляем все ActualSend
-
-//    public boolean existsInDB(Giveaway giveaway) {
-//        List<giveaway> promotionList= giveawayRepository.findByTitleAndStartDateAndEndDate(promotion.title, promotion.startDate, promotion.endDate);
-//        return !promotionList.isEmpty();
-//    }
 
     public void putIntoDB(Giveaway giveaway) {
         giveawayRepository.save(giveaway);
@@ -84,17 +57,49 @@ public class GiveawayService {
     }
 
     public String formCaption(Giveaway giveaway) {
-        return "*Title: * "+giveaway.getTitle() + "\n" +
-                "*Description: * "+ giveaway.getDescription() + "\n" +
+//придумать что-нибудь адекватное с формирование макс. длинной текста
+        String caption = "*Title: * "+ escape(giveaway.getTitle()) + "\n" +
+                "*Description: * "+ escape(giveaway.getDescription()) + "\n" +
                 "*End date: * " + giveaway.getEnd_date() + "\n" +
-                "*Instructions: *" + giveaway.getInstructions() + "\n" +
+                "*Instructions: *" + escape(giveaway.getInstructions()) + "\n" +
                 "*Type: *" + giveaway.getType() + "\n" +
                 "*Platforms: *" + giveaway.getPlatforms() + "\n" +
                 "*Gamerpower URL: *" + giveaway.getGamerpower_url() + "\n" +
                 "*Open Giveaway URL: *" + giveaway.getOpen_giveaway_url();
+        if (caption.length() > 1000) {
+            caption = "*Title: * "+ escape(giveaway.getTitle()) + "\n" +
+                    "*End date: * " + giveaway.getEnd_date() + "\n" +
+                    "*Instructions: *" + escape(giveaway.getInstructions()) + "\n" +
+                    "*Type: *" + giveaway.getType() + "\n" +
+                    "*Platforms: *" + giveaway.getPlatforms() + "\n" +
+                    "*Gamerpower URL: *" + giveaway.getGamerpower_url() + "\n" +
+                    "*Open Giveaway URL: *" + giveaway.getOpen_giveaway_url();
+        } if (caption.length() > 1000) {
+            caption = "*Title: * "+ escape(giveaway.getTitle()) + "\n" +
+                    "*End date: * " + giveaway.getEnd_date() + "\n" +
+                    "*Instructions: *" + escape(giveaway.getInstructions()) + "\n" +
+                    "*Gamerpower URL: *" + giveaway.getGamerpower_url() + "\n" +
+                    "*Open Giveaway URL: *" + giveaway.getOpen_giveaway_url();
+        } if (caption.length() > 1000) {
+            caption = "*Title: * "+ escape(giveaway.getTitle()) + "\n" +
+                    "*End date: * " + giveaway.getEnd_date() + "\n" +
+                    "*Gamerpower URL: *" + giveaway.getGamerpower_url() + "\n" +
+                    "*Open Giveaway URL: *" + giveaway.getOpen_giveaway_url();
+        }
+        return caption;
     }
 
     public List<Giveaway> getAllGiveawaysFromDB() {
         return giveawayRepository.findAll();
+    }
+
+    private String escape(String message) {
+        String escapedMsg = message
+                .replace("_", "\\_")
+                .replace("*", "\\*")
+                .replace("[", "\\[")
+                .replace("`", "\\`")
+                .replaceAll("<(.*?)\\>"," ");
+        return escapedMsg;
     }
 }

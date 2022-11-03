@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.katkova.gamerpowerannouncer.data.User;
-import ru.katkova.gamerpowerannouncer.data.UserPoll;
 import ru.katkova.gamerpowerannouncer.repository.UserRepository;
 
 import javax.transaction.Transactional;

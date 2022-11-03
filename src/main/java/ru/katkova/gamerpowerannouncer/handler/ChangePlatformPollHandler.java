@@ -14,7 +14,6 @@ import ru.katkova.gamerpowerannouncer.service.UserService;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ChangePlatformPollHandler implements UserActionHandler{

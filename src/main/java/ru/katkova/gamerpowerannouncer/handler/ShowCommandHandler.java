@@ -2,7 +2,6 @@ package ru.katkova.gamerpowerannouncer.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -10,7 +9,6 @@ import ru.katkova.gamerpowerannouncer.data.Giveaway;
 import ru.katkova.gamerpowerannouncer.data.User;
 import ru.katkova.gamerpowerannouncer.dictionary.Command;
 import ru.katkova.gamerpowerannouncer.dictionary.UserAction;
-import ru.katkova.gamerpowerannouncer.job.ScheduledJob;
 import ru.katkova.gamerpowerannouncer.service.GiveawayService;
 
 import java.util.ArrayList;
@@ -48,9 +46,6 @@ public class ShowCommandHandler implements UserActionHandler {
                 giveawayService.deleteFromDB(giveaway);
             }
         }
-
-//        Thread checkUpdates = new Thread(() -> scheduledJob.check());
-//        checkUpdates.start();
 
         return sendPhotoList;
     }
